@@ -117,7 +117,8 @@ endif
 CC_FLAGS += -DBUILD_CONFIG=$(CONFIG)
 CC_FLAGS += -Wno-deprecated-register
 CC_FLAGS += -s USE_ZLIB
-
+CC_FLAGS += -s USE_SDL=2
+CC_FLAGS +=  -lopenal
 
 #
 # linker flags
