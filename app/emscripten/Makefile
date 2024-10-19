@@ -1,6 +1,3 @@
-
-
-
 #
 # Makefile for building with emscripten
 # This is intended to be run from the root dir:
