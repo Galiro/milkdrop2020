@@ -223,10 +223,12 @@ elseif (EMSCRIPTEN)
              -s MIN_WEBGL_VERSION=2 \
              -s MAX_WEBGL_VERSION=2 \
              -s FULL_ES2=1 \
+             -s USE_ZLIB=1 \
              -s ALLOW_MEMORY_GROWTH=1 \
              -s DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=1 \
+             -s WASM_MEM_MAX=1024MB\
              -mnontrapping-fptoint \
-             -lopenal"
+             "
             )
 
     set(CMAKE_EXECUTABLE_SUFFIX ".html")
