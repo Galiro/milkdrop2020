@@ -1,7 +1,7 @@
 #!/bin/bash 
 set -e
 
-export CMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -sUSE_SDL=2"
+export CMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -sUSE_SDL=2 -lopenal"
 
 cmake   -S . \
         -B build.emscripten \

@@ -56,6 +56,10 @@ endif()
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-reorder -Wno-deprecated-register -Wno-self-assign -Wno-c++11-narrowing -Wno-misleading-indentation ")
 
+if (EMSCRIPTEN) 
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -gsource-map --source-map-base http://localhost:9091/build.emscripten/ -s USE_ZLIB -s USE_SDL=2 -s USE_PTHREADS -s WASM_WORKERS -Wno-deprecated-register ")
+endif()
+
 set(IMGUI_SOURCE
         ${IMGUI_SOURCE_DIR}/imgui.cpp
         ${IMGUI_SOURCE_DIR}/imgui_draw.cpp
@@ -142,7 +146,7 @@ set(INCLUDE_DIRS
         ${COMMON_SOURCE_DIR}/script
         ${COMMON_SOURCE_DIR}/script/mdp-eel2
     )
-
+ 
 
 if (APPLE)
 
@@ -192,7 +196,7 @@ elseif (EMSCRIPTEN)
     
     SET(APP_NAME ${CMAKE_PROJECT_NAME} )
 
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s USE_ZLIB -s USE_SDL=2 -Wno-deprecated-register")
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -gsource-map --source-map-base http://localhost:9091/build.emscripten/ -s USE_ZLIB -s USE_SDL=2 -Wno-deprecated-register")
 
     add_executable(${APP_NAME}
                 ${MDP_SOURCE}
@@ -214,9 +218,12 @@ elseif (EMSCRIPTEN)
             --shell-file ${SHELL_FILE} \
              -emrun \
              -s TOTAL_MEMORY=536870912 \
+             -s STACK_SIZE=5MB \
+             -s DEFAULT_PTHREAD_STACK_SIZE=2MB \
              -s LLD_REPORT_UNDEFINED \
              -s DEMANGLE_SUPPORT=1 \
              -s WASM=1 \
+             -s WASM_WORKERS=2 \
              -s ASSERTIONS=1 \
              -s USE_WEBGL2=1 \
              -s USE_SDL=2 \
@@ -227,6 +234,13 @@ elseif (EMSCRIPTEN)
              -s ALLOW_MEMORY_GROWTH=1 \
              -s DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=1 \
              -s WASM_MEM_MAX=1024MB\
+             -s LEGACY_RUNTIME=1 \
+             -s EXPORTED_RUNTIME_METHODS=['ccall, cwrap'] \
+             -s EXPORTED_FUNCTIONS=['_main, _malloc, _free'] \
+             -s USE_PTHREADS=1 \
+             --source-map-base http://localhost:9091/build.emscripten/ \
+             -g \
+             -gsource-map \
              -mnontrapping-fptoint \
              "
             )

@@ -9,6 +9,8 @@
 #include "ImageWriter.h"
 #include "../external/imgui/imgui_internal.h"
 #include "json.h"
+#include "audio/ALAudioSource.cpp"
+// #include "audio/WebAudioSource.cpp"
 
 #include <chrono>
 #include <cstdio>
@@ -20,9 +22,8 @@ IAudioSourcePtr OpenALAudioSource();
 IAudioSourcePtr OpenSLESAudioSource();
 IAudioSourcePtr OpenUDPAudioSource();
 IAudioSourcePtr OpenAVAudioEngineSource();
-
-
-
+IAudioSourcePtr OpenAVAudioEngineSource();
+// IAudioSourcePtr WebAudioSource = WebAudioSource::Create();
 
 
 class TextureSet : public ITextureSet
@@ -2607,7 +2608,7 @@ VizControllerPtr CreateVizController(ContextPtr context, std::string assetDir, s
     // add user supplied presets...
     vizController->LoadPresetBundlesFromDir( PathCombine(userDir, "presets") );
     
-    vizController->OpenInputAudioFile("audio/audio.wav");
+    //vizController->OpenInputAudioFile("audio/audio.wav");
 
 #if defined(__APPLE__)
    vizController->SetMicrophoneAudioSource(OpenAVAudioEngineSource());
@@ -2617,7 +2618,8 @@ VizControllerPtr CreateVizController(ContextPtr context, std::string assetDir, s
 #elif defined(__ANDROID__) || defined(OCULUS)
     vizController->SetMicrophoneAudioSource(OpenSLESAudioSource());
 #else
-    vizController->SetMicrophoneAudioSource(OpenNullAudioSource());
+    // vizController->SetMicrophoneAudioSource(OpenNullAudioSource());
+    vizController->SetMicrophoneAudioSource(OpenALAudioSource());
 #endif
     
     vizController->LoadConfig();

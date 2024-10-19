@@ -28,3 +28,8 @@ server/upload
 server/appdata
 build
 external/ovr_sdk_mobile_*
+build.emscripten/
+log/
+.vscode/
+.DS_Store
+server.conf
