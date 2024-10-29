@@ -10,7 +10,7 @@
 #include "../external/imgui/imgui_internal.h"
 #include "json.h"
 #include "audio/ALAudioSource.cpp"
-// #include "audio/WebAudioSource.cpp"
+#include "audio/WebAudioSource.cpp"
 
 #include <chrono>
 #include <cstdio>
@@ -124,6 +124,7 @@ VizController::VizController(ContextPtr context, std::string assetDir, std::stri
     m_audio_null = OpenNullAudioSource();
     m_audio_wavfile = m_audio_null;
     m_audio_microphone = m_audio_null;
+    m_audio_webAudio = m_audio_null;
     
     m_texture_map = std::make_shared<TextureSet>();
     
@@ -169,7 +170,6 @@ VizController::~VizController()
 
     
 }
-
 
 
 void VizController::OnTestingComplete()
@@ -479,8 +479,6 @@ void VizController::ProcessPresetLoad()
     }
 }
 
-
-
 void VizController::LoadPresetBundlesFromDir(std::string dir)
 {
 	std::vector<std::string> files;
@@ -497,8 +495,6 @@ void VizController::LoadPresetBundlesFromDir(std::string dir)
 	}
 }
 
-
-
 void VizController::TestingStart()
 {
 //    m_captureScreenshots = false;
@@ -514,7 +510,6 @@ void VizController::TestingStart()
     }
 
 }
-
 
 std::string VizController::TestingResultsToString()
 {
@@ -576,7 +571,6 @@ std::string VizController::TestingResultsToString()
     return s.GetString();
 }
 
-
 void VizController::TestingDump()
 {
    
@@ -621,7 +615,6 @@ void VizController::TestingAbort()
     LogPrint("Testing paused\n");
 }
 
-
 void VizController::OpenInputAudioFile(const char *path)
 {
     IAudioSourcePtr OpenWavFileAudioSource(const char *path);
@@ -643,8 +636,11 @@ void VizController::OpenInputAudioFile(const char *path)
     m_audioSource = m_audio_wavfile;
 }
 
-
-
+void VizController::OpenWebAudioFile()
+{
+    m_audio_webAudio = WebAudioSource::Create();
+    m_audioSource = m_audio_webAudio;   
+}
 
 void VizController::SingleStep()
 {
@@ -709,7 +705,6 @@ void VizController::SetCurrentPresetRating(float rating)
     
 }
 
-
 void VizController::NavigatePrevious()
 {
     
@@ -724,7 +719,6 @@ void VizController::NavigatePrevious()
         //
     }
 }
-
 
 void VizController::NavigateNext()
 {
@@ -741,7 +735,6 @@ void VizController::NavigateNext()
     
 }
 
-
 void VizController::NavigateRandom(bool blend)
 {
     auto preset = m_presetListFiltered.SelectRandom(m_random_generator);
@@ -756,8 +749,6 @@ void VizController::NavigateRandom(bool blend)
     }
     
 }
-
-
 
 static bool ToolbarButton(const char *id, const char *tooltip)
 {
@@ -916,7 +907,6 @@ void VizController::GetPresetTitle(std::string &title) const
     }
 
 }
-
 
 bool VizController::IsToolbarButtonVisible(UIToolbarButton button)
 {
@@ -1232,8 +1222,6 @@ void VizController::DrawControlsWindow()
     
 }
 
-
-
 static void TableNameValue(const char *name, const char *format, ...)
 {
     char str[64 * 1024];
@@ -1252,9 +1240,6 @@ static void TableNameValue(const char *name, const char *format, ...)
     ImGui::TableSetColumnIndex(1);
     ImGui::TextUnformatted(str);
 }
-
-
-
 
 void VizController::DrawSettingsWindow()
 {
@@ -1373,8 +1358,6 @@ void VizController::DrawSettingsWindow()
    
 }
 
-
-
 static void AppendNameValue(std::string &table, const char *name, const char *format, ...)
 {
     char str[64 * 1024];
@@ -1396,8 +1379,6 @@ static void AppendSeparator(std::string &table)
 {
     table += '\n';
 }
-
-
 
 void VizController::GetAboutInfo(std::string &info) const
 {
@@ -1568,7 +1549,6 @@ void VizController::DrawPanel_Video()
 
 }
 
-
 void PresetList::Sort(ImGuiTableSortSpecs *specs)
 {
     auto selected = (_position < (int)_list.size()) ? _list[_position] : nullptr;
@@ -1623,7 +1603,6 @@ void PresetList::Sort(ImGuiTableSortSpecs *specs)
         }
     }
 }
-
 
 static int DrawPresetTableUI(PresetList &list, bool sortable, bool forceresort)
 {
@@ -1873,7 +1852,7 @@ void VizController::DrawPanel_Audio()
         ImGui::Text("Audio Source");
         ImGui::TableNextColumn();
         
-        IAudioSourcePtr sources[] = {m_audio_null,m_audio_wavfile, m_audio_microphone, nullptr};
+        IAudioSourcePtr sources[] = {m_audio_null,m_audio_wavfile, m_audio_microphone, m_audio_webAudio, nullptr};
 
         for (int i=0; sources[i]; i++)
         {
@@ -1951,8 +1930,6 @@ void VizController::DrawPanel_Screenshots()
     
     ImGui::GetStyle().FramePadding = fp;
 }
-
-
 
 void VizController::DrawSettingsTabs()
 {
@@ -2045,7 +2022,6 @@ void VizController::DrawSettingsTabs()
 
 }
 
-
 std::string VizController::GetScreenshotPath(PresetInfoPtr preset)
 {
     std::string spath =  preset->Name + ".png";  // GetScreenshotPath(preset);
@@ -2065,8 +2041,6 @@ void VizController::CaptureScreenshot()
     CaptureScreenshot(path);
 }
 
-
-
 static void SwapRGBA(ImageDataPtr image)
 {
     for (int y = 0; y < image->height; y++)
@@ -2080,7 +2054,6 @@ static void SwapRGBA(ImageDataPtr image)
         }
     }
 }
-
 
 void VizController::CaptureScreenshot(std::string path)
 {
@@ -2150,10 +2123,7 @@ void VizController::CaptureScreenshot(std::string path)
 
     
 }
-
-    
-
-    
+     
 extern void DebugGUIInputDevice();
 
 void VizController::DrawDebugUI()
@@ -2246,7 +2216,6 @@ void VizController::DrawDebugUI()
     }
 }
 
-
 void VizController::RenderFrame(float dt)
 {
     PROFILE_FUNCTION();
@@ -2271,8 +2240,6 @@ void VizController::RenderFrame(float dt)
     if (!m_audioSource) {
         m_audioSource = m_audio_null;
     }
-    
-    
 
     // compute size of visualizer we want to render to, depends on displaysize
     Size2D size = m_context->GetDisplaySize();
@@ -2285,7 +2252,6 @@ void VizController::RenderFrame(float dt)
         size.width  = (int)( (float)size.width  * scale);
         size.height = (int)((float) size.height * scale);
     }
-    
     
     m_vizualizer->Render(dt, size, m_audioSource);
     
@@ -2333,9 +2299,6 @@ void VizController::RenderFrame(float dt)
 
 }
 
-
-
-
 void VizController::Render(int screenId, int screenCount, float dt)
 {
     PROFILE_FUNCTION();
@@ -2382,16 +2345,12 @@ void VizController::Render(int screenId, int screenCount, float dt)
 
         m_renderTime = sw.GetElapsedMilliSeconds();
         
-    }
-
-    
+    } 
     
     if (screenId == 0)
     {
         // ImGui rendering to first screen
-        
         ImGuiSupport_NewFrame();
-        
         
         DrawDebugUI();
         m_context->SetRenderTarget(nullptr, "ImGui", (screenCount > 1) ? LoadAction::Clear : LoadAction::Load);
@@ -2410,7 +2369,6 @@ void  VizController::ToggleControlsMenu()
     m_showUI = !m_showUI;
     
 }
-
 
 static bool LoadJsonFile(rapidjson::Document &doc, std::string path)
 {
@@ -2453,7 +2411,6 @@ void VizController::LoadConfig()
 
 }
 
-
 void VizController::SaveConfig()
 {
     JsonStringWriter writer;
@@ -2492,7 +2449,6 @@ void VizController::SaveConfig()
     writer.SaveToFile(m_configPath);
 }
 
-
 void VizController::LoadRatings()
 {
     rapidjson::Document doc;
@@ -2515,8 +2471,6 @@ void VizController::LoadRatings()
     }
 
 }
-
-
 
 void VizController::SaveRatings()
 {
@@ -2542,8 +2496,6 @@ void VizController::SaveRatings()
     writer.SaveToFile(m_ratingsPath);
 
 }
-
-
 
 void VizController::LoadHistory()
 {
@@ -2591,7 +2543,6 @@ void VizController::SaveHistory()
 }
 
 
-
 VizControllerPtr CreateVizController(ContextPtr context, std::string assetDir, std::string userDir)
 {
     PROFILE_FUNCTION()
@@ -2609,6 +2560,7 @@ VizControllerPtr CreateVizController(ContextPtr context, std::string assetDir, s
     vizController->LoadPresetBundlesFromDir( PathCombine(userDir, "presets") );
     
     //vizController->OpenInputAudioFile("audio/audio.wav");
+    vizController->OpenWebAudioFile();
 
 #if defined(__APPLE__)
    vizController->SetMicrophoneAudioSource(OpenAVAudioEngineSource());

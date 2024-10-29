@@ -28,6 +28,7 @@ public:
     virtual bool ShouldQuit() { return m_shouldQuit; }
 
 	virtual void OpenInputAudioFile(const char *path);
+    virtual void OpenWebAudioFile();
     virtual void SetMicrophoneAudioSource(IAudioSourcePtr source)
     {
         m_audio_microphone = source;
@@ -210,6 +211,7 @@ public:
     IAudioSourcePtr             m_audio_wavfile;
     IAudioSourcePtr             m_audio_microphone;
     IAudioSourcePtr             m_audioSource;
+    IAudioSourcePtr             m_audio_webAudio;
     float                       m_audioGain = 1.0f;
     
 	int                         m_frame = 0;

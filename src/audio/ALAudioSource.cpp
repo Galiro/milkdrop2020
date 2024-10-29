@@ -65,8 +65,6 @@ public:
         mSamples.clear();
     }
 
-
-    
     virtual void ReadAudioFrame(float dt, SampleBuffer<Sample> &samples) override
     {
         Process();
@@ -83,7 +81,6 @@ public:
         mSamples.erase(mSamples.begin(), mSamples.begin() + avail);
         
         
-
         // pad end with empty samples
         while (samples.size() < total)
         {

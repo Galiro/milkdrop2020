@@ -196,7 +196,7 @@ elseif (EMSCRIPTEN)
     
     SET(APP_NAME ${CMAKE_PROJECT_NAME} )
 
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -gsource-map --source-map-base http://localhost:9091/build.emscripten/ -s USE_ZLIB -s USE_SDL=2 -Wno-deprecated-register")
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -gsource-map --source-map-base http://localhost:9091/build.emscripten/ -s USE_ZLIB -s USE_SDL=2 -s AUDIO_WORKLET=1 -Wno-deprecated-register")
 
     add_executable(${APP_NAME}
                 ${MDP_SOURCE}
@@ -224,6 +224,7 @@ elseif (EMSCRIPTEN)
              -s DEMANGLE_SUPPORT=1 \
              -s WASM=1 \
              -s WASM_WORKERS=2 \
+             -s AUDIO_WORKLET=1 \
              -s ASSERTIONS=1 \
              -s USE_WEBGL2=1 \
              -s USE_SDL=2 \
